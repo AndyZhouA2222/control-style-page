@@ -152,15 +152,9 @@ const modelOpts={
     if(pre){pre.classList.add('pre-done');setTimeout(()=>pre.remove(),800);}
   }
 };
-fetch(MODEL_LOCAL,{method:'HEAD'})
-  .then(r=>{
-    if(r.ok&&r.headers.get('content-type')!=='text/plain;charset=UTF-8'){
-      loadGLB(MODEL_LOCAL,modelOpts);
-    } else {
-      loadGLB(MODEL_REMOTE,modelOpts);
-    }
-  })
-  .catch(()=>loadGLB(MODEL_REMOTE,modelOpts));
+// 本地开发用本地文件，GitHub Pages 直接用远程
+const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:';
+loadGLB(isLocal?MODEL_LOCAL:MODEL_REMOTE,modelOpts);
 
 let fc=0,lt=performance.now();const fpsEl=document.getElementById('statusFps');
 function animate(){
