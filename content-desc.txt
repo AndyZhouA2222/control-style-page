@@ -1,0 +1,101 @@
+// ============================================================
+// DESCRIPTION & NOTES CONFIG
+// 修改完成后告诉我，我来帮你批量替换到代码里
+//
+// 加密语法: 用 [[ ]] 包裹需要加密的词
+//   例如: The [[axial design]] merging Brutalist...
+//   → 该词会变成 ASCII 码显示，点击可解密
+//
+// DETAILS 每条用换行分隔，共3条
+// ============================================================
+
+
+// ─────────────────────────────────────────
+// NODE: overview
+// ─────────────────────────────────────────
+
+DESC_overview:
+Full view of the Federal Bureau of Control main hall. Symmetrical [[axial design]] merging Brutalist architectural language with paranatural geometric sigils.
+
+DETAILS_overview:
+Approx. 40m atrium height
+Symmetrical axial composition
+Cycles render → wireframe conversion
+
+
+// ─────────────────────────────────────────
+// NODE: pillars
+// ─────────────────────────────────────────
+
+DESC_pillars:
+Symmetrically arranged colossal pillar groups flanking both sides, featuring multi-layered stepped [[geometric cross-sections]].
+
+DETAILS_pillars:
+Boolean groove cuts via BoxCutter
+Pillar array managed with GroupPro
+EdgesGeometry threshold: 35°
+
+
+// ─────────────────────────────────────────
+// NODE: ceiling
+// ─────────────────────────────────────────
+
+DESC_ceiling:
+Central skylight opening upward, introducing the sole source of natural light. Chamfered geometric framing implies [[spatial instability]].
+
+DETAILS_ceiling:
+Primary scene lighting source
+Post-process outlines most effective here
+Light contrast reinforces depth
+
+
+// ─────────────────────────────────────────
+// NODE: floor
+// ─────────────────────────────────────────
+
+DESC_floor:
+Dark stone inlay flooring with a central diamond-shaped [[geometric emblem]] mirroring the suspended ornament above.
+
+DETAILS_floor:
+Sigils via Inset + Extrude
+Optional floor reflections
+EdgesGeometry extracts inlay lines
+
+
+// ─────────────────────────────────────────
+// NODE: hanging
+// ─────────────────────────────────────────
+
+DESC_hanging:
+Inverted pyramid-form ornament hovering above the atrium, red diamond core on all four faces. The spatial [[focal point]].
+
+DETAILS_hanging:
+Separate export recommended
+Emissive material for red core
+Primary click-interaction target
+
+
+// ─────────────────────────────────────────
+// NODE: walls
+// ─────────────────────────────────────────
+
+DESC_walls:
+Multi-layered concrete panels with vertical red tubular structures embedded within. Strong [[rhythm and imposed order]].
+
+DETAILS_walls:
+Array + Boolean generation
+Most boolean artifacts here
+Post-process approach advantageous
+
+
+// ─────────────────────────────────────────
+// NODE: entrance
+// ─────────────────────────────────────────
+
+DESC_entrance:
+Ground-level entrance zone. Human-scale figure demonstrates [[immense spatial proportions]].
+
+DETAILS_entrance:
+Human figure as scale reference
+Entrance framing reinforces depth
+Simple geometry in lower zone

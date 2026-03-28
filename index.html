@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FBC — Architectural Breakdown</title>
+  <script type="importmap">
+  { "imports": {
+    "three": "./libs/three.module.js"
+  }}
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="scene-container"></div>
+  <div class="scanlines"></div>
+  <div class="noise"></div>
+  <div class="vignette"></div>
+  <div class="crosshair"><div class="crosshair-h"></div><div class="crosshair-v"></div></div>
+
+  <div class="view-indicator">
+    <div class="view-indicator-label">Current View</div>
+    <div class="view-indicator-name" id="viewName">MAIN HALL</div>
+  </div>
+  <div class="key-hints">
+    <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> Switch view &nbsp;
+    <kbd>TAB</kbd> Toggle panel &nbsp;
+    <kbd>ESC</kbd> Close
+  </div>
+
+  <div class="topbar" id="topbar">
+    <div class="topbar-left">
+      <div class="topbar-diamond"></div>
+      <span class="topbar-title">FBC</span>
+    </div>
+    <div class="topbar-center" id="nodeTabs"></div>
+    <button class="topbar-toggle" id="toggleBtn" title="Toggle panel">▼</button>
+  </div>
+
+  <div class="dropdown" id="dropdown">
+    <div class="dropdown-content">
+      <div class="dropdown-left">
+        <div class="dropdown-map" id="dropdownMap">
+          <svg id="mapSvg"></svg>
+          <div id="mapNodes"></div>
+          <div class="map-corner tl"></div><div class="map-corner tr"></div>
+          <div class="map-corner bl"></div><div class="map-corner br"></div>
+        </div>
+        <div class="dropdown-info" id="dropdownInfo">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-diamond"><span>◈</span></div>
+            <div class="empty-text">Select a sector to inspect</div>
+          </div>
+          <div id="detailContent" style="display:none;">
+            <div class="detail-subtitle" id="dSubtitle"></div>
+            <div class="detail-title" id="dTitle"></div>
+            <div class="section-label">Description</div>
+            <div class="desc-text" id="dDesc"></div>
+            <div class="section-label">Technical Notes</div>
+            <div id="dDetails" style="margin-bottom:12px;"></div>
+            <div class="section-label dim">Linked Sectors</div>
+            <div id="dLinks" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+            <div class="stamp-mini">FBC//ARCH.DIV — [REDACTED] — 0x4F3A — SECTOR.FLAG — ◈ — XK-7 — ALTERED</div>
+          </div>
+        </div>
+      </div>
+      <div class="dropdown-right" id="dropdownRight">
+        <div class="image-preview" id="imagePreview">
+          <div class="image-placeholder" id="imagePlaceholder">
+            <div class="ph-diamond"><span>◈</span></div>
+            <div class="ph-text">Render preview</div>
+          </div>
+        </div>
+        <div class="preview-corner tl"></div><div class="preview-corner tr"></div>
+        <div class="preview-corner bl"></div><div class="preview-corner br"></div>
+        <div class="click-hint">Click image to enlarge</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cam-switcher">
+    <div class="cam-label">Viewpoint</div>
+    <div class="cam-buttons" id="camButtons"></div>
+    <button class="zoom-btn" id="zoomBtn">⬡ ZOOM IN</button>
+  </div>
+
+  <div id="preloader">
+    <div class="pre-inner">
+      <div class="pre-title">FBC</div>
+      <div class="pre-sub">ARCHITECTURAL DIVISION</div>
+      <div class="pre-bar-wrap"><div class="pre-bar" id="preBar"></div></div>
+      <div class="pre-pct" id="prePct">0%</div>
+      <div class="pre-label" id="preLabel">INITIALIZING</div>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">×</button>
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-label" id="lightboxLabel"></div>
+  </div>
+
+  <div class="statusbar">
+    <span>FBC // ARCHITECTURAL DIVISION</span><span>|</span>
+    <span id="statusActive">SECTOR: NONE</span><span>|</span>
+    <span class="hiss">■</span><span id="statusState">STANDBY</span>
+    <div class="spacer"></div>
+    <span>VIEW: </span><span id="statusCam">01</span>
+    <span>|</span><span id="statusFps">--</span><span>FPS</span>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

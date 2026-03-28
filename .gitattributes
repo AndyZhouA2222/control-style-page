@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+model.glb filter=lfs diff=lfs merge=lfs -text
+models/model.glb filter=lfs diff=lfs merge=lfs -text

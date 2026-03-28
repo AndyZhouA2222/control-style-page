@@ -1,0 +1,62 @@
+// ============================================================
+// CONTENT REPLACEMENT FILE
+// 格式: 原文 = 替换后内容
+// 修改完成后告诉我，我来帮你批量替换到代码里
+// ============================================================
+
+
+// --- TOPBAR ---
+
+TOPBAR_TITLE = FBC
+
+
+// --- TAB LABELS (顶部导航) ---
+
+TAB_overview   = Overview
+TAB_pillars    = Pillars
+TAB_ceiling    = Skylight
+TAB_floor      = Floor Sigils
+TAB_hanging    = Suspended Object
+TAB_walls      = Wall Facade
+TAB_entrance   = Threshold
+
+
+// --- SUBTITLES (节点副标题) ---
+
+SUB_overview   = THE OLDEST HOUSE
+SUB_pillars    = STRUCTURAL PILLARS
+SUB_ceiling    = ASTRAL SKYLIGHT
+SUB_floor      = FLOOR SIGILS
+SUB_hanging    = OBJECT OF POWER
+SUB_walls      = CONTAINMENT WALLS
+SUB_entrance   = THRESHOLD
+
+
+// --- CAMERA NAMES (摄像机视角名称) ---
+
+CAM_1 = MAIN HALL
+CAM_2 = SKYLIGHT
+CAM_3 = ALTAR VIEW
+
+
+// --- UI LABELS ---
+
+LABEL_viewpoint        = Viewpoint
+LABEL_currentview      = Current View
+LABEL_zoom_in          = ⬡ ZOOM IN
+LABEL_zoom_out         = ⬡ ZOOM OUT
+LABEL_select_sector    = Select a sector to inspect
+LABEL_render_preview   = Render preview
+LABEL_click_enlarge    = Click image to enlarge
+LABEL_section_desc     = Description
+LABEL_section_tech     = Technical Notes
+LABEL_section_linked   = Linked Sectors
+LABEL_statusbar        = FBC // ARCHITECTURAL DIVISION
+
+
+// --- PRELOADER ---
+
+PRE_title      = FBC
+PRE_subtitle   = ARCHITECTURAL DIVISION
+PRE_loading    = LOADING SECTOR DATA
+PRE_rendering  = RENDERING
