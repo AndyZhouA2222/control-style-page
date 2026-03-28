@@ -134,29 +134,33 @@ function loadGLB(path, options={}){
 }
 
 // LOAD MODEL
-loadGLB('models/model.glb', {
-  position: [0, 0, 0],
-  rotation: [0, 0, 0],
-  scale: 1,
-  wireframe: true,
-  onProgress: (pct) => {
-    const bar = document.getElementById('preBar');
-    const pctEl = document.getElementById('prePct');
-    const label = document.getElementById('preLabel');
-    if(bar) bar.style.width = pct + '%';
-    if(pctEl) pctEl.textContent = pct + '%';
-    if(label) label.textContent = pct < 100 ? 'LOADING SECTOR DATA' : 'RENDERING';
+const MODEL_LOCAL='models/model.glb';
+const MODEL_REMOTE='https://storage.googleapis.com/modelandyzzz/model.glb';
+const modelOpts={
+  position:[0,0,0],rotation:[0,0,0],scale:1,wireframe:true,
+  onProgress:(pct)=>{
+    const bar=document.getElementById('preBar');
+    const pctEl=document.getElementById('prePct');
+    const label=document.getElementById('preLabel');
+    if(bar)bar.style.width=pct+'%';
+    if(pctEl)pctEl.textContent=pct+'%';
+    if(label)label.textContent=pct<100?'LOADING SECTOR DATA':'RENDERING';
   },
-  onLoad: (model) => {
-    console.log('模型加载完成', model);
+  onLoad:(model)=>{
     markDirty();
-    const pre = document.getElementById('preloader');
-    if(pre){
-      pre.classList.add('pre-done');
-      setTimeout(() => pre.remove(), 800);
-    }
+    const pre=document.getElementById('preloader');
+    if(pre){pre.classList.add('pre-done');setTimeout(()=>pre.remove(),800);}
   }
-});
+};
+fetch(MODEL_LOCAL,{method:'HEAD'})
+  .then(r=>{
+    if(r.ok&&r.headers.get('content-type')!=='text/plain;charset=UTF-8'){
+      loadGLB(MODEL_LOCAL,modelOpts);
+    } else {
+      loadGLB(MODEL_REMOTE,modelOpts);
+    }
+  })
+  .catch(()=>loadGLB(MODEL_REMOTE,modelOpts));
 
 let fc=0,lt=performance.now();const fpsEl=document.getElementById('statusFps');
 function animate(){
