@@ -58,7 +58,6 @@ let tween = null;
 function tweenCam(toPos, toTarget, duration=1800, onDone){
   const fromPos = camera.position.clone();
   const fromTarget = new THREE.Vector3(...CAMERAS[curCam].target);
-  // find current lookAt target
   let curTarget;
   if(tween && tween.toTarget) curTarget = tween.toTarget.clone();
   else curTarget = fromTarget;
@@ -152,8 +151,12 @@ const modelOpts={
     if(pre){pre.classList.add('pre-done');setTimeout(()=>pre.remove(),800);}
   }
 };
-// 本地开发用本地文件，GitHub Pages 直接用远程
-const isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:';
+
+// OFFLINE MODE: uncomment the line below and comment out ONLINE MODE to use local model
+//loadGLB(MODEL_LOCAL, modelOpts);
+
+// ONLINE MODE: comment out the lines below when using OFFLINE MODE
+const isLocal=false;
 loadGLB(isLocal?MODEL_LOCAL:MODEL_REMOTE,modelOpts);
 
 let fc=0,lt=performance.now();const fpsEl=document.getElementById('statusFps');
@@ -191,7 +194,7 @@ const Cipher=(()=>{
   function parse(text){
     return text.replace(/<cipher data="([^"]+)">([^<]+)<\/cipher>/g,(match,original,ascii)=>{
       if(unlocked.has(original))return `<span class="cipher-unlocked">${original}</span>`;
-      const id='cipher-'+btoa(unescape(encodeURIComponent(original))).replace(/=/g,'');
+      const id='cipher-'+btoa(String.fromCharCode(...new TextEncoder().encode(original))).replace(/=/g,'');
       return `<span class="cipher-block" data-original="${original}" data-ascii="${ascii}" id="${id}">${ascii}<span class="cipher-hint">⬡ ENCRYPTED</span></span>`;
     });
   }
@@ -285,7 +288,6 @@ function applyStamp(){
   const finalText=genStamp();
   const chars=[...finalText];
   const assignedFonts=chars.map(ch=>ch===' '?'':fonts[Math.floor(Math.random()*fonts.length)]);
-  // 初始化 span
   stamp.innerHTML='';
   const spans=chars.map((ch,i)=>{
     const s=document.createElement('span');
@@ -294,7 +296,6 @@ function applyStamp(){
     stamp.appendChild(s);
     return s;
   });
-  // scramble动画
   const duration=1400;
   const start=performance.now();
   const locked=new Array(chars.length).fill(false);
@@ -303,13 +304,8 @@ function applyStamp(){
     const progress=Math.min(elapsed/duration,1);
     spans.forEach((s,i)=>{
       if(chars[i]===' '){s.textContent=' ';return;}
-      // 随着进度逐渐锁定每个字符
-      if(!locked[i]&&Math.random()<progress*0.15){
-        locked[i]=true;
-        s.textContent=chars[i];
-      }
+      if(!locked[i]&&Math.random()<progress*0.15){locked[i]=true;s.textContent=chars[i];}
       if(!locked[i]){
-        // 随机显示乱码字符
         const pool=Math.random()<0.1?syms:null;
         s.textContent=pool?pool[Math.floor(Math.random()*pool.length)]:letters[Math.floor(Math.random()*letters.length)];
       }
@@ -349,7 +345,7 @@ function closeLB(){const lb=document.getElementById('lightbox');lb.classList.rem
 document.getElementById('lightboxClose').addEventListener('click',closeLB);
 document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===e.currentTarget)closeLB();});
 
-// STATUS 
+// STATUS
 function renderStatus(){const d=curNode?getNode(curNode):null;document.getElementById('statusActive').textContent='SECTOR: '+(d?d.subtitle:'NONE');document.getElementById('statusState').textContent=curNode?'VIEWING':'STANDBY';}
 function renderPanel(){const dd=document.getElementById('dropdown'),tb=document.getElementById('topbar'),btn=document.getElementById('toggleBtn');if(pOpen){dd.classList.add('open');tb.classList.add('panel-open');btn.classList.add('open');btn.textContent='\u25B2';document.body.classList.add('panel-open');}else{dd.classList.remove('open');tb.classList.remove('panel-open');btn.classList.remove('open');btn.textContent='\u25BC';document.body.classList.remove('panel-open');}}
 function renderAll(){renderTabs();renderMapCon();renderMapNodes();renderDetail();renderStatus();renderPanel();renderCamBtns();}
@@ -394,5 +390,4 @@ function parseContent(text){
 fetch('content-desc.txt')
   .then(r=>r.text())
   .then(text=>{parseContent(text);renderAll();})
-  .catch(()=>renderAll());
-renderAll();
+  .catch(()=>renderAll()); 
