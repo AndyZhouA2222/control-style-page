@@ -1,4 +1,11 @@
 ﻿@font-face {
+  font-family: 'Eurostile';
+  src: url('font/EurostileExtendedBlack.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
   font-family: 'CodeLang';
   src: url('font/CodeLanguage2_1_Monospace-s.p.eaddaa15.otf') format('opentype');
   font-weight: normal;
@@ -42,7 +49,7 @@
 body {
   background: #0c0c0f;
   color: #c8c8d0;
-  font-family: 'Interstate', 'AvantGarde', 'Courier New', monospace;
+  font-family: 'Eurostile', 'AvantGarde', 'Courier New', monospace;
   overflow: hidden;
   user-select: none;
   height: 100vh;
@@ -252,7 +259,7 @@ body {
   backdrop-filter: blur(8px);
   border: 1px solid #2a2a35;
   color: #666;
-  font-family: 'Courier New', monospace;
+  font-family: 'Eurostile', monospace;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -299,7 +306,7 @@ body {
   backdrop-filter: blur(8px);
   border: 1px solid #2a2a35;
   color: #666;
-  font-family: 'Courier New', monospace;
+  font-family: 'Eurostile', monospace;
   font-size: 11px;
   letter-spacing: 2px;
   padding: 8px 14px;
@@ -947,15 +954,15 @@ svg line {
 }
 
 .pre-title {
-  font-size: 32px;
+  font-size: 52px;
   letter-spacing: 12px;
   color: #e94560;
-  font-family: 'Courier New', monospace;
+  font-family: 'Eurostile', monospace;
   text-transform: uppercase;
 }
 
 .pre-sub {
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 4px;
   color: #333;
   text-transform: uppercase;
@@ -981,12 +988,12 @@ svg line {
   font-size: 11px;
   color: #e94560;
   letter-spacing: 2px;
-  font-family: 'Courier New', monospace;
+  font-family: 'Eurostile', monospace;
   margin-top: 8px;
 }
 
 .pre-label {
-  font-size: 8px;
+  font-size: 11px;
   color: #333;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -1000,7 +1007,7 @@ svg line {
   background: none;
   border: 1px solid #e94560;
   color: #e94560;
-  font-family: 'Interstate', 'AvantGarde', monospace;
+  font-family: 'Eurostile', monospace;
   font-size: 13px;
   letter-spacing: 0.2em;
   padding: 8px 28px;
@@ -1018,6 +1025,23 @@ svg line {
 .pre-enter:hover {
   background: #e94560;
   color: #0c0c0f;
+}
+
+.area-title-small {
+  font-size: clamp(40px, 6vw, 90px);
+  letter-spacing: 0.15em;
+  font-family: 'AvantGarde', sans-serif;
+}
+
+.area-title.active .area-title-small {
+  animation: area-text-in-small 5s ease forwards;
+}
+
+@keyframes area-text-in-small {
+  0%   { opacity: 0; letter-spacing: 0.15em; }
+  15%  { opacity: 1; letter-spacing: 0.15em; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .area-title {
@@ -1077,7 +1101,7 @@ svg line {
   background: #e9456012;
   border: 1px solid #e9456035;
   padding: 1px 6px;
-  font-family: 'Courier New', monospace;
+  font-family: 'Eurostile', monospace;
   font-size: 11px;
   letter-spacing: 1px;
   cursor: pointer;
@@ -1106,7 +1130,7 @@ svg line {
   white-space: nowrap;
   pointer-events: none;
   text-transform: uppercase;
-  font-family: 'Courier New', monospace;
+  font-family: 'Eurostile', monospace;
 }
 
 .cipher-hint {
@@ -1182,7 +1206,7 @@ svg line {
   color: #666;
   letter-spacing: 2px;
   margin-bottom: 20px;
-  font-family: 'Courier New', monospace;
+  font-family: 'Eurostile', monospace;
   border-left: 2px solid #e9456060;
   padding: 10px 12px;
   background: #e9456008;
@@ -1196,7 +1220,7 @@ svg line {
   border: 1px solid #2a2a35;
   color: #e8e8f0;
   padding: 10px 14px;
-  font-family: 'Courier New', monospace;
+  font-family: 'Eurostile', monospace;
   font-size: 14px;
   letter-spacing: 3px;
   outline: none;

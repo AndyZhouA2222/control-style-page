@@ -20,10 +20,10 @@ const NODES = [
   { id:"floor",     label:"Floor Sigils",     subtitle:"FLOOR SIGILS",       x:85, y:38, symbol:"\u25C7",
     image:"images/floor.png", aspect:"landscape",
     desc:"", details:[] },
-  { id:"hanging",   label:"Suspended Object", subtitle:"OBJECT OF POWER",   x:35, y:62, symbol:"\u25BD",
+  { id:"hanging",   label:"THE GATE",          subtitle:"OBJECT OF POWER",   x:35, y:62, symbol:"\u25BD",
     image:"images/hanging.png", aspect:"portrait",
     desc:"", details:[] },
-  { id:"walls",     label:"Wall Facade",      subtitle:"CONTAINMENT WALLS",  x:65, y:62, symbol:"\u2261",
+  { id:"walls",     label:"THE WALL",          subtitle:"CONTAINMENT WALLS",  x:65, y:62, symbol:"\u2261",
     image:"images/walls.png", aspect:"landscape",
     desc:"", details:[] },
   { id:"entrance",  label:"Threshold",        subtitle:"THRESHOLD",          x:50, y:88, symbol:"\u2293",
@@ -155,23 +155,34 @@ const modelOpts={
     if(enterBtn)enterBtn.classList.add('visible');
     if(enterBtn&&pre){
       enterBtn.addEventListener('click',()=>{
-        const snd=document.getElementById('areaSound');
-        if(snd){snd.volume=1.0;snd.preservesPitch=false;snd.playbackRate=1.0;snd.play().catch(()=>{});}
         pre.classList.add('pre-done');
         pre.addEventListener('transitionend',()=>{
           pre.remove();
+          const atPre=document.getElementById('area-title-pre');
           const at=document.getElementById('area-title');
-          if(at){at.classList.add('active');setTimeout(()=>at.classList.remove('active'),5100);}
+          if(atPre){
+            atPre.classList.add('active');
+            setTimeout(()=>{
+              atPre.classList.remove('active');
+              setTimeout(()=>{
+                const snd2=document.getElementById('areaSound');
+                if(snd2){snd2.volume=1.0;snd2.preservesPitch=false;snd2.playbackRate=1.0;snd2.play().catch(()=>{});}
+                if(at){at.classList.add('active');setTimeout(()=>at.classList.remove('active'),5100);}
+              },400);
+            },5100);
+          } else if(at){
+            at.classList.add('active');setTimeout(()=>at.classList.remove('active'),5100);
+          }
         },{once:true});
       },{once:true});
     }
   }
 };
 
-// OFFLINE MODE: uncomment the line below and comment out ONLINE MODE to use local model
+// zombie MODE: uncomment the line below and comment out ONLINE MODE to use local model
 //loadGLB(MODEL_LOCAL, modelOpts);
 
-// ONLINE MODE: comment out the lines below when using OFFLINE MODE
+// ONLINE MODE: comment out the lines below when using zombie MODE
 const isLocal=false;
 loadGLB(isLocal?MODEL_LOCAL:MODEL_REMOTE,modelOpts);
 
@@ -406,4 +417,4 @@ function parseContent(text){
 fetch('content-desc.txt')
   .then(r=>r.text())
   .then(text=>{parseContent(text);renderAll();})
-  .catch(()=>renderAll()); 
+  .catch(()=>renderAll());

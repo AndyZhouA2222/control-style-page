@@ -17,7 +17,7 @@ TAB_pillars    = Pillars
 TAB_ceiling    = Skylight
 TAB_floor      = Floor Sigils
 TAB_hanging    = Suspended Object
-TAB_walls      = Wall Facade
+TAB_walls      = THE WALL
 TAB_entrance   = Threshold
 
 
@@ -56,7 +56,7 @@ LABEL_statusbar        = FBC // ARCHITECTURAL DIVISION
 
 // --- PRELOADER ---
 
-PRE_title      = FBC
-PRE_subtitle   = ARCHITECTURAL DIVISION
+PRE_title      = BHC
+PRE_subtitle   = The Blackstone Bureau of Hazard and Containment
 PRE_loading    = LOADING SECTOR DATA
 PRE_rendering  = RENDERING
