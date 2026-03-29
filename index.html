@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -10,6 +10,7 @@
   }}
   </script>
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:,">
 </head>
 <body>
   <div id="scene-container"></div>
@@ -84,6 +85,11 @@
     <button class="zoom-btn" id="zoomBtn">⬡ ZOOM IN</button>
   </div>
 
+  <div id="area-title" class="area-title">
+    <div class="area-title-text">THE NAVE</div>
+  </div>
+  <audio id="areaSound" src="sound/soundeffectfromcontrol.mp3" preload="auto"></audio>
+
   <div id="preloader">
     <div class="pre-inner">
       <div class="pre-title">FBC</div>
@@ -91,6 +97,7 @@
       <div class="pre-bar-wrap"><div class="pre-bar" id="preBar"></div></div>
       <div class="pre-pct" id="prePct">0%</div>
       <div class="pre-label" id="preLabel">INITIALIZING</div>
+      <button class="pre-enter" id="preEnter">⬡ ENTER</button>
     </div>
   </div>
 

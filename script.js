@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+﻿import * as THREE from 'three';
 import { GLTFLoader } from './libs/GLTFLoader.js';
 
 const CAMERAS = [
@@ -82,14 +82,14 @@ let zoomed = false;
 function toggleZoom(){
   const btn = document.getElementById('zoomBtn');
   if(!zoomed){
-    tweenCam(ZOOM_CAM.pos, ZOOM_CAM.target, 1800, ()=>{ zoomed=true; if(btn){btn.textContent='⬡ ZOOM OUT';btn.classList.add('active');} });
+    tweenCam(ZOOM_CAM.pos, ZOOM_CAM.target, 1800, ()=>{ zoomed=true; if(btn){btn.textContent='⬡ZOOM OUT';btn.classList.add('active');} });
   } else {
     const p = CAMERAS[curCam];
-    tweenCam(p.pos, p.target, 1800, ()=>{ zoomed=false; if(btn){btn.textContent='⬡ ZOOM IN';btn.classList.remove('active');} });
+    tweenCam(p.pos, p.target, 1800, ()=>{ zoomed=false; if(btn){btn.textContent='⬡ZOOM IN';btn.classList.remove('active');} });
   }
 }
 
-function applyCam(i){const p=CAMERAS[i];camera.position.set(...p.pos);camera.lookAt(new THREE.Vector3(...p.target));curCam=i;zoomed=false;markDirty();const btn=document.getElementById('zoomBtn');if(btn){btn.textContent='⬡ ZOOM IN';btn.classList.remove('active');}document.getElementById('viewName').textContent=p.name;document.getElementById('statusCam').textContent=String(i+1).padStart(2,'0');renderCamBtns();}
+function applyCam(i){const p=CAMERAS[i];camera.position.set(...p.pos);camera.lookAt(new THREE.Vector3(...p.target));curCam=i;zoomed=false;markDirty();const btn=document.getElementById('zoomBtn');if(btn){btn.textContent='⬡ZOOM IN';btn.classList.remove('active');}document.getElementById('viewName').textContent=p.name;document.getElementById('statusCam').textContent=String(i+1).padStart(2,'0');renderCamBtns();}
 
 const gr=new THREE.GridHelper(30,30,0x1a1a2e,0x12121a);gr.position.y=0.01;scene.add(gr);
 applyCam(0);
@@ -141,6 +141,7 @@ const modelOpts={
     const bar=document.getElementById('preBar');
     const pctEl=document.getElementById('prePct');
     const label=document.getElementById('preLabel');
+    const enterBtn=document.getElementById('preEnter');
     if(bar)bar.style.width=pct+'%';
     if(pctEl)pctEl.textContent=pct+'%';
     if(label)label.textContent=pct<100?'LOADING SECTOR DATA':'RENDERING';
@@ -148,7 +149,22 @@ const modelOpts={
   onLoad:(model)=>{
     markDirty();
     const pre=document.getElementById('preloader');
-    if(pre){pre.classList.add('pre-done');setTimeout(()=>pre.remove(),800);}
+    const enterBtn=document.getElementById('preEnter');
+    const label=document.getElementById('preLabel');
+    if(label)label.textContent='READY';
+    if(enterBtn)enterBtn.classList.add('visible');
+    if(enterBtn&&pre){
+      enterBtn.addEventListener('click',()=>{
+        const snd=document.getElementById('areaSound');
+        if(snd){snd.volume=1.0;snd.preservesPitch=false;snd.playbackRate=1.0;snd.play().catch(()=>{});}
+        pre.classList.add('pre-done');
+        pre.addEventListener('transitionend',()=>{
+          pre.remove();
+          const at=document.getElementById('area-title');
+          if(at){at.classList.add('active');setTimeout(()=>at.classList.remove('active'),5100);}
+        },{once:true});
+      },{once:true});
+    }
   }
 };
 
@@ -170,7 +186,7 @@ function animate(){
   if(n-lt>=1000){fpsEl.textContent=fc;fc=0;lt=n;}
 }
 animate();
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);const p=CAMERAS[curCam];camera.lookAt(new THREE.Vector3(...p.target));});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);const p=CAMERAS[curCam];camera.lookAt(new THREE.Vector3(...p.target));markDirty();});
 
 // CAM BUTTONS
 function renderCamBtns(){const el=document.getElementById('camButtons');el.innerHTML='';CAMERAS.forEach((c,i)=>{const b=document.createElement('button');b.className='cam-btn'+(curCam===i?' active':'');b.innerHTML=`${i+1}<span class="cam-btn-name">${c.name}</span>`;b.addEventListener('click',()=>applyCam(i));el.appendChild(b);});}
@@ -195,7 +211,7 @@ const Cipher=(()=>{
     return text.replace(/<cipher data="([^"]+)">([^<]+)<\/cipher>/g,(match,original,ascii)=>{
       if(unlocked.has(original))return `<span class="cipher-unlocked">${original}</span>`;
       const id='cipher-'+btoa(String.fromCharCode(...new TextEncoder().encode(original))).replace(/=/g,'');
-      return `<span class="cipher-block" data-original="${original}" data-ascii="${ascii}" id="${id}">${ascii}<span class="cipher-hint">⬡ ENCRYPTED</span></span>`;
+      return `<span class="cipher-block" data-original="${original}" data-ascii="${ascii}" id="${id}">${ascii}<span class="cipher-hint">⬡ENCRYPTED</span></span>`;
     });
   }
 
