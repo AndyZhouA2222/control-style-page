@@ -1,10 +1,9 @@
 // ============================================================
 // DESCRIPTION & NOTES CONFIG
-// 修改完成后告诉我，我来帮你批量替换到代码里
+// 
 //
 // 加密语法: 用 [[ ]] 包裹需要加密的词
 //   例如: The [[axial design]] merging Brutalist...
-//   → 该词会变成 ASCII 码显示，点击可解密
 //
 // DETAILS 每条用换行分隔，共3条
 // ============================================================
@@ -15,12 +14,12 @@
 // ─────────────────────────────────────────
 
 DESC_overview:
-Full view of the Federal Bureau of Control main hall. Symmetrical [[axial design]] merging Brutalist architectural language with paranatural geometric sigils.
+This website is Andy Zhou's personal online portfolio of concept art. The portfolio includes my recent world-building project, [[Black Stone]].
 
 DETAILS_overview:
-Approx. 40m atrium height
-Symmetrical axial composition
-Cycles render → wireframe conversion
+This worldview is based on the SCP Foundation and Control.
+There will be some words on the page encoded with ACSII code, which can be unlocked by entering the correct word.
+I modeled all the images myself with blender. AI was not involved in the production, just Photoshop for post-processing.
 
 
 // ─────────────────────────────────────────
