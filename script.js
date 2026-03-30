@@ -2,8 +2,8 @@
 import { GLTFLoader } from './libs/GLTFLoader.js';
 
 const CAMERAS = [
-  { name: "MAIN HALL",  pos: [0.0, 4.0059, 28.0],    target: [0.0, 7.27, 12.5022] },
-  { name: "SKYLIGHT",   pos: [3.6527, 1.6361, 25.6215],  target: [0.9227, 6.7443, 17.4695] },
+  { name: "MAIN",  pos: [0.0, 4.0059, 28.0],    target: [0.0, 7.27, 12.5022] },
+  { name: "side",   pos: [3.6527, 1.6361, 25.6215],  target: [0.9227, 6.7443, 17.4695] },
   { name: "ALTAR VIEW", pos: [10, 4, 8],                  target: [-2, 7, -4] },
 ];
 
