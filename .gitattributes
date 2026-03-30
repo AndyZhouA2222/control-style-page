@@ -1,7 +1,8 @@
-# Auto detect text files and perform LF normalization
+﻿# Auto detect text files and perform LF normalization
 * text=auto
 
 # Binary files - do not modify
 *.glb binary
 *.otf binary
+*.ttf binary
 *.png binary
