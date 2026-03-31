@@ -55,10 +55,12 @@ function getLinks(id){return CONNECTIONS.filter(([a,b])=>a===id||b===id).map(([a
 
 // THREE.JS
 const container=document.getElementById('scene-container');
-const scene=new THREE.Scene(); scene.background=new THREE.Color(0x0c0c0f);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x0c0c0f);
 const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,1000);
 const renderer=new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 container.appendChild(renderer.domElement);
 
 // -------------------------------------------------------
@@ -98,17 +100,46 @@ let zoomed = false;
 function toggleZoom(){
   const btn = document.getElementById('zoomBtn');
   if(!zoomed){
-    tweenCam(ZOOM_CAM.pos, ZOOM_CAM.target, 1800, ()=>{ zoomed=true; if(btn){btn.textContent='⬡ZOOM OUT';btn.classList.add('active');} });
+    tweenCam(ZOOM_CAM.pos, ZOOM_CAM.target, 1800, () => {
+      zoomed = true;
+      if(btn){
+        btn.textContent = '⬡ZOOM OUT';
+        btn.classList.add('active');
+      }
+    });
   } else {
     const p = CAMERAS[curCam];
-    tweenCam(p.pos, p.target, 1800, ()=>{ zoomed=false; if(btn){btn.textContent='⬡ZOOM IN';btn.classList.remove('active');} });
+    tweenCam(p.pos, p.target, 1800, () => {
+      zoomed = false;
+      if(btn){
+        btn.textContent = '⬡ZOOM IN';
+        btn.classList.remove('active');
+      }
+    });
   }
 }
 
 // switch to the specified preset camera position and reset zoom state and ui
-function applyCam(i){const p=CAMERAS[i];camera.position.set(...p.pos);camera.lookAt(new THREE.Vector3(...p.target));curCam=i;zoomed=false;markDirty();const btn=document.getElementById('zoomBtn');if(btn){btn.textContent='⬡ZOOM IN';btn.classList.remove('active');}document.getElementById('viewName').textContent=p.name;document.getElementById('statusCam').textContent=String(i+1).padStart(2,'0');renderCamBtns();}
+function applyCam(i){
+  const p = CAMERAS[i];
+  camera.position.set(...p.pos);
+  camera.lookAt(new THREE.Vector3(...p.target));
+  curCam = i;
+  zoomed = false;
+  markDirty();
+  const btn = document.getElementById('zoomBtn');
+  if(btn){
+    btn.textContent = '⬡ZOOM IN';
+    btn.classList.remove('active');
+  }
+  document.getElementById('viewName').textContent = p.name;
+  document.getElementById('statusCam').textContent = String(i+1).padStart(2,'0');
+  renderCamBtns();
+}
 
-const gr=new THREE.GridHelper(30,30,0x1a1a2e,0x12121a);gr.position.y=0.01;scene.add(gr);
+const gr=new THREE.GridHelper(30,30,0x1a1a2e,0x12121a);
+gr.position.y=0.01;
+scene.add(gr);
 applyCam(0);
 
 // GLB LOADER
@@ -206,7 +237,9 @@ const isLocal=false; // or set to true to use local mode, and do in both ways
 loadGLB(isLocal?MODEL_LOCAL:MODEL_REMOTE,modelOpts);
 
 // Variables for the FPS counter
-let fc=0,lt=performance.now();const fpsEl=document.getElementById('statusFps');
+let fc = 0;
+let lt = performance.now();
+const fpsEl = document.getElementById('statusFps');
 function animate(){
   requestAnimationFrame(animate);
   if(!dirty) return; // skip render if nothing changed
@@ -217,18 +250,93 @@ function animate(){
   if(n-lt>=1000){fpsEl.textContent=fc;fc=0;lt=n;}
 }
 animate();
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);const p=CAMERAS[curCam];camera.lookAt(new THREE.Vector3(...p.target));markDirty();});
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  const p = CAMERAS[curCam];
+  camera.lookAt(new THREE.Vector3(...p.target));
+  markDirty();
+});
 
 // CAM BUTTONS
-function renderCamBtns(){const el=document.getElementById('camButtons');el.innerHTML='';CAMERAS.forEach((c,i)=>{const b=document.createElement('button');b.className='cam-btn'+(curCam===i?' active':'');b.innerHTML=`${i+1}<span class="cam-btn-name">${c.name}</span>`;b.addEventListener('click',()=>applyCam(i));el.appendChild(b);});}
+function renderCamBtns(){
+  const el = document.getElementById('camButtons');
+  el.innerHTML = '';
+  CAMERAS.forEach((c, i) => {
+    const b = document.createElement('button');
+    b.className = 'cam-btn' + (curCam === i ? ' active' : '');
+    b.innerHTML = `${i+1}<span class="cam-btn-name">${c.name}</span>`;
+    b.addEventListener('click', () => applyCam(i));
+    el.appendChild(b);
+  });
+}
 
 // TABS
-function renderTabs(){const el=document.getElementById('nodeTabs');el.innerHTML='';NODES.forEach(n=>{const b=document.createElement('button');b.className='node-tab'+(curNode===n.id?' active':'');b.innerHTML=`<span class="tab-symbol">${n.symbol}</span>${n.label}`;b.addEventListener('click',()=>{curNode=curNode===n.id?null:n.id;if(curNode&&!pOpen)pOpen=true;renderAll();});el.appendChild(b);});}
+function renderTabs(){
+  const el = document.getElementById('nodeTabs');
+  el.innerHTML = '';
+  NODES.forEach(n => {
+    const b = document.createElement('button');
+    b.className = 'node-tab' + (curNode === n.id ? ' active' : '');
+    b.innerHTML = `<span class="tab-symbol">${n.symbol}</span>${n.label}`;
+    b.addEventListener('click', () => {
+      curNode = curNode === n.id ? null : n.id;
+      if(curNode && !pOpen) pOpen = true;
+      renderAll();
+    });
+    el.appendChild(b);
+  });
+}
 
 // MAP
-function renderMapCon(){const svg=document.getElementById('mapSvg');svg.innerHTML='';CONNECTIONS.forEach(([fI,tI])=>{const f=getNode(fI),t=getNode(tI),isA=curNode===fI||curNode===tI,isH=hoverNode===fI||hoverNode===tI;const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',f.x+'%');l.setAttribute('y1',f.y+'%');l.setAttribute('x2',t.x+'%');l.setAttribute('y2',t.y+'%');l.setAttribute('stroke',isA?'#e94560':isH?'#e9456050':'#1e1e28');l.setAttribute('stroke-width',isA?1.5:0.5);l.setAttribute('stroke-dasharray',isA?'none':'3 5');svg.appendChild(l);});}
+function renderMapCon(){
+  const svg = document.getElementById('mapSvg');
+  svg.innerHTML = '';
+  CONNECTIONS.forEach(([fI, tI]) => {
+    const f = getNode(fI);
+    const t = getNode(tI);
+    const isA = curNode === fI || curNode === tI;
+    const isH = hoverNode === fI || hoverNode === tI;
+    const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    l.setAttribute('x1', f.x + '%');
+    l.setAttribute('y1', f.y + '%');
+    l.setAttribute('x2', t.x + '%');
+    l.setAttribute('y2', t.y + '%');
+    l.setAttribute('stroke', isA ? '#e94560' : isH ? '#e9456050' : '#1e1e28');
+    l.setAttribute('stroke-width', isA ? 1.5 : 0.5);
+    l.setAttribute('stroke-dasharray', isA ? 'none' : '3 5');
+    svg.appendChild(l);
+  });
+}
 
-function renderMapNodes(){const c=document.getElementById('mapNodes');c.innerHTML='';NODES.forEach(n=>{const isA=curNode===n.id,isCon=curNode&&getLinks(curNode).includes(n.id),isD=curNode&&!isA&&!isCon;const el=document.createElement('div');el.className='map-node'+(isA?' active':'')+(isD?' dimmed':'');el.style.left=n.x+'%';el.style.top=n.y+'%';el.innerHTML=`<div class="map-symbol"><span>${n.symbol}</span></div><div class="map-label">${n.label}</div>`;el.addEventListener('click',()=>{curNode=isA?null:n.id;renderAll();});el.addEventListener('mouseenter',()=>{hoverNode=n.id;renderMapCon();});el.addEventListener('mouseleave',()=>{hoverNode=null;renderMapCon();});c.appendChild(el);});}
+function renderMapNodes(){
+  const c = document.getElementById('mapNodes');
+  c.innerHTML = '';
+  NODES.forEach(n => {
+    const isA = curNode === n.id;
+    const isCon = curNode && getLinks(curNode).includes(n.id);
+    const isD = curNode && !isA && !isCon;
+    const el = document.createElement('div');
+    el.className = 'map-node' + (isA ? ' active' : '') + (isD ? ' dimmed' : '');
+    el.style.left = n.x + '%';
+    el.style.top = n.y + '%';
+    el.innerHTML = `<div class="map-symbol"><span>${n.symbol}</span></div><div class="map-label">${n.label}</div>`;
+    el.addEventListener('click', () => {
+      curNode = isA ? null : n.id;
+      renderAll();
+    });
+    el.addEventListener('mouseenter', () => {
+      hoverNode = n.id;
+      renderMapCon();
+    });
+    el.addEventListener('mouseleave', () => {
+      hoverNode = null;
+      renderMapCon();
+    });
+    c.appendChild(el);
+  });
+}
 
 // CIPHER
 // Convert the specified text to ASCII code
@@ -290,17 +398,29 @@ const Cipher=(()=>{
           unlocked.add(original);
           popup.classList.add('cp-success');
           popup.querySelector('.cp-label').textContent='⬡ DECRYPTED';
-          setTimeout(()=>{popup.remove();document.getElementById('cipher-overlay')?.remove();if(onUnlock)onUnlock();},600);
+          setTimeout(() => {
+            popup.remove();
+            document.getElementById('cipher-overlay')?.remove();
+            if(onUnlock) onUnlock();
+          }, 600);
         } else {
           const err=document.getElementById('cp-err');
           err.textContent='ACCESS DENIED — INCORRECT KEY';
           input.classList.add('cp-shake');
           setTimeout(()=>input.classList.remove('cp-shake'),400);
         }
-      } else if(e.key==='Escape'){closing=true;popup.remove();document.getElementById('cipher-overlay')?.remove();}
+      } else if(e.key==='Escape'){
+        closing = true;
+        popup.remove();
+        document.getElementById('cipher-overlay')?.remove();
+      }
     });
-    const close=e=>{
-      if(!closing&&!popup.contains(e.target)&&e.target!==el){popup.remove();document.getElementById('cipher-overlay')?.remove();document.removeEventListener('mousedown',close);}
+    const close = e => {
+      if(!closing && !popup.contains(e.target) && e.target !== el){
+        popup.remove();
+        document.getElementById('cipher-overlay')?.remove();
+        document.removeEventListener('mousedown', close);
+      }
     };
     setTimeout(()=>document.addEventListener('mousedown',close),100);
   }
@@ -369,47 +489,145 @@ function applyStamp(){
   requestAnimationFrame(scramble);
 }
 function renderDetail(){
-  const empty=document.getElementById('emptyState'),content=document.getElementById('detailContent');
-  const preview=document.getElementById('imagePreview'),ph=document.getElementById('imagePlaceholder');
-  const oldImg=preview.querySelector('img'); if(oldImg)oldImg.remove(); ph.style.display='flex';
-  if(!curNode){empty.style.display='flex';content.style.display='none';return;}
-  const d=getNode(curNode); empty.style.display='none'; content.style.display='block';
-  document.getElementById('dSubtitle').textContent=d.subtitle;
-  document.getElementById('dTitle').textContent=d.label;
-  document.getElementById('dDesc').innerHTML=Cipher.parse(d.desc);
+  const empty = document.getElementById('emptyState');
+  const content = document.getElementById('detailContent');
+  const preview = document.getElementById('imagePreview');
+  const ph = document.getElementById('imagePlaceholder');
+  const oldImg = preview.querySelector('img');
+  if(oldImg) oldImg.remove();
+  ph.style.display = 'flex';
+
+  if(!curNode){
+    empty.style.display = 'flex';
+    content.style.display = 'none';
+    return;
+  }
+
+  const d = getNode(curNode);
+  empty.style.display = 'none';
+  content.style.display = 'block';
+  document.getElementById('dSubtitle').textContent = d.subtitle;
+  document.getElementById('dTitle').textContent = d.label;
+  document.getElementById('dDesc').innerHTML = Cipher.parse(d.desc);
   Cipher.bind(renderDetail);
+
   if(d.image){
-    const img=document.createElement('img'); img.src=d.image; img.alt=d.label;
-    img.addEventListener('load',()=>{img.classList.add('loaded');ph.style.display='none';});
-    img.addEventListener('error',()=>img.remove());
-    img.addEventListener('click',()=>openLB(d.image,d.label));
+    const img = document.createElement('img');
+    img.src = d.image;
+    img.alt = d.label;
+    img.addEventListener('load', () => {
+      img.classList.add('loaded');
+      ph.style.display = 'none';
+    });
+    img.addEventListener('error', () => img.remove());
+    img.addEventListener('click', () => openLB(d.image, d.label));
     preview.appendChild(img);
   }
-  const det=document.getElementById('dDetails');det.innerHTML='';
-  d.details.forEach((t,i)=>{const r=document.createElement('div');r.className='tech-row';r.innerHTML=`<div class="tech-num">${String(i+1).padStart(2,'0')}</div><span class="tech-text">${t}</span>`;det.appendChild(r);});
-  const lnk=document.getElementById('dLinks');lnk.innerHTML='';
-  getLinks(curNode).forEach(lid=>{const ln=getNode(lid);const b=document.createElement('button');b.className='link-btn';b.innerHTML=`<span class="sym">${ln.symbol}</span>${ln.label}`;b.addEventListener('click',()=>{curNode=lid;renderAll();});lnk.appendChild(b);});
+
+  const det = document.getElementById('dDetails');
+  det.innerHTML = '';
+  d.details.forEach((t, i) => {
+    const r = document.createElement('div');
+    r.className = 'tech-row';
+    r.innerHTML = `<div class="tech-num">${String(i+1).padStart(2,'0')}</div><span class="tech-text">${t}</span>`;
+    det.appendChild(r);
+  });
+
+  const lnk = document.getElementById('dLinks');
+  lnk.innerHTML = '';
+  getLinks(curNode).forEach(lid => {
+    const ln = getNode(lid);
+    const b = document.createElement('button');
+    b.className = 'link-btn';
+    b.innerHTML = `<span class="sym">${ln.symbol}</span>${ln.label}`;
+    b.addEventListener('click', () => {
+      curNode = lid;
+      renderAll();
+    });
+    lnk.appendChild(b);
+  });
+
   applyStamp();
 }
 
 // LIGHTBOX
-function openLB(src,label){const lb=document.getElementById('lightbox');document.getElementById('lightboxImg').src=src;document.getElementById('lightboxLabel').textContent=label;lb.style.display='flex';requestAnimationFrame(()=>lb.classList.add('open'));}
-function closeLB(){const lb=document.getElementById('lightbox');lb.classList.remove('open');setTimeout(()=>{lb.style.display='none';},300);}
-document.getElementById('lightboxClose').addEventListener('click',closeLB);
-document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===e.currentTarget)closeLB();});
+function openLB(src, label){
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxLabel').textContent = label;
+  lb.style.display = 'flex';
+  requestAnimationFrame(() => lb.classList.add('open'));
+}
+function closeLB(){
+  const lb = document.getElementById('lightbox');
+  lb.classList.remove('open');
+  setTimeout(() => {
+    lb.style.display = 'none';
+  }, 300);
+}
+document.getElementById('lightboxClose').addEventListener('click', closeLB);
+document.getElementById('lightbox').addEventListener('click', e => {
+  if(e.target === e.currentTarget) closeLB();
+});
 
 // STATUS
-function renderStatus(){const d=curNode?getNode(curNode):null;document.getElementById('statusActive').textContent='SECTOR: '+(d?d.subtitle:'NONE');document.getElementById('statusState').textContent=curNode?'VIEWING':'STANDBY';}
-function renderPanel(){const dd=document.getElementById('dropdown'),tb=document.getElementById('topbar'),btn=document.getElementById('toggleBtn');if(pOpen){dd.classList.add('open');tb.classList.add('panel-open');btn.classList.add('open');btn.textContent='\u25B2';document.body.classList.add('panel-open');}else{dd.classList.remove('open');tb.classList.remove('panel-open');btn.classList.remove('open');btn.textContent='\u25BC';document.body.classList.remove('panel-open');}}
-function renderAll(){renderTabs();renderMapCon();renderMapNodes();renderDetail();renderStatus();renderPanel();renderCamBtns();}
+function renderStatus(){
+  const d = curNode ? getNode(curNode) : null;
+  document.getElementById('statusActive').textContent = 'SECTOR: ' + (d ? d.subtitle : 'NONE');
+  document.getElementById('statusState').textContent = curNode ? 'VIEWING' : 'STANDBY';
+}
+function renderPanel(){
+  const dd = document.getElementById('dropdown');
+  const tb = document.getElementById('topbar');
+  const btn = document.getElementById('toggleBtn');
+  if(pOpen){
+    dd.classList.add('open');
+    tb.classList.add('panel-open');
+    btn.classList.add('open');
+    btn.textContent = '\u25B2';
+    document.body.classList.add('panel-open');
+  } else {
+    dd.classList.remove('open');
+    tb.classList.remove('panel-open');
+    btn.classList.remove('open');
+    btn.textContent = '\u25BC';
+    document.body.classList.remove('panel-open');
+  }
+}
+function renderAll(){
+  renderTabs();
+  renderMapCon();
+  renderMapNodes();
+  renderDetail();
+  renderStatus();
+  renderPanel();
+  renderCamBtns();
+}
 
 // EVENTS
 document.getElementById('toggleBtn').addEventListener('click',()=>{pOpen=!pOpen;renderAll();});
 document.getElementById('zoomBtn').addEventListener('click',toggleZoom);
-document.addEventListener('keydown',e=>{
-  if(e.key==='1')applyCam(0);else if(e.key==='2')applyCam(1);else if(e.key==='3')applyCam(2);
-  else if(e.key==='Tab'){e.preventDefault();pOpen=!pOpen;renderAll();}
-  else if(e.key==='Escape'){if(document.getElementById('lightbox').classList.contains('open')){closeLB();return;}if(curNode){curNode=null;}else if(pOpen){pOpen=false;}renderAll();}
+document.addEventListener('keydown', e => {
+  if(e.key === '1') applyCam(0);
+  else if(e.key === '2') applyCam(1);
+  else if(e.key === '3') applyCam(2);
+  else if(e.key === 'Tab'){
+    e.preventDefault();
+    pOpen = !pOpen;
+    renderAll();
+  }
+  else if(e.key === 'Escape'){
+    if(document.getElementById('lightbox').classList.contains('open')){
+      closeLB();
+      return;
+    }
+    if(curNode){
+      curNode = null;
+    } else if(pOpen){
+      pOpen = false;
+    }
+    renderAll();
+  }
 });
 
 // CONTENT LOADER
