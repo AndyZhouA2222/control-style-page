@@ -127,7 +127,7 @@ function loadGLB(path, options={}){
         model.traverse(child=>{
           if(child.isMesh){
             const edges=new THREE.LineSegments(
-              new THREE.EdgesGeometry(child.geometry,45), // Show only hard edges greater than 45° // Show only hard edges greater than 45°
+              new THREE.EdgesGeometry(child.geometry,45), // Show only hard edges greater than 45° // 
               new THREE.LineBasicMaterial({color:0xe94560,transparent:true,opacity:0.5})
             );
             edges.position.copy(child.position);
@@ -226,6 +226,7 @@ function renderTabs(){const el=document.getElementById('nodeTabs');el.innerHTML=
 
 // MAP
 function renderMapCon(){const svg=document.getElementById('mapSvg');svg.innerHTML='';CONNECTIONS.forEach(([fI,tI])=>{const f=getNode(fI),t=getNode(tI),isA=curNode===fI||curNode===tI,isH=hoverNode===fI||hoverNode===tI;const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',f.x+'%');l.setAttribute('y1',f.y+'%');l.setAttribute('x2',t.x+'%');l.setAttribute('y2',t.y+'%');l.setAttribute('stroke',isA?'#e94560':isH?'#e9456050':'#1e1e28');l.setAttribute('stroke-width',isA?1.5:0.5);l.setAttribute('stroke-dasharray',isA?'none':'3 5');svg.appendChild(l);});}
+
 function renderMapNodes(){const c=document.getElementById('mapNodes');c.innerHTML='';NODES.forEach(n=>{const isA=curNode===n.id,isCon=curNode&&getLinks(curNode).includes(n.id),isD=curNode&&!isA&&!isCon;const el=document.createElement('div');el.className='map-node'+(isA?' active':'')+(isD?' dimmed':'');el.style.left=n.x+'%';el.style.top=n.y+'%';el.innerHTML=`<div class="map-symbol"><span>${n.symbol}</span></div><div class="map-label">${n.label}</div>`;el.addEventListener('click',()=>{curNode=isA?null:n.id;renderAll();});el.addEventListener('mouseenter',()=>{hoverNode=n.id;renderMapCon();});el.addEventListener('mouseleave',()=>{hoverNode=null;renderMapCon();});c.appendChild(el);});}
 
 // CIPHER
