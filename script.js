@@ -82,6 +82,7 @@ function tweenCam(toPos, toTarget, duration=1800, onDone){
   function tick(now){
     if(!tween || !tween.active) return;
     const t = Math.min((now - start) / duration, 1);
+    //  Ease in-out equation refer to https://gist.github.com/gre/1650294
     const e = t<0.5 ? 2*t*t : -1+(4-2*t)*t;
     camera.position.lerpVectors(fromPos, to.pos, e);
     const lerpTarget = new THREE.Vector3().lerpVectors(curTarget, to.target, e);
@@ -104,7 +105,7 @@ function toggleZoom(){
   }
 }
 
-// Immediately switch to the specified preset camera position and reset zoom state and ui
+// switch to the specified preset camera position and reset zoom state and ui
 function applyCam(i){const p=CAMERAS[i];camera.position.set(...p.pos);camera.lookAt(new THREE.Vector3(...p.target));curCam=i;zoomed=false;markDirty();const btn=document.getElementById('zoomBtn');if(btn){btn.textContent='⬡ZOOM IN';btn.classList.remove('active');}document.getElementById('viewName').textContent=p.name;document.getElementById('statusCam').textContent=String(i+1).padStart(2,'0');renderCamBtns();}
 
 const gr=new THREE.GridHelper(30,30,0x1a1a2e,0x12121a);gr.position.y=0.01;scene.add(gr);
@@ -208,7 +209,7 @@ loadGLB(isLocal?MODEL_LOCAL:MODEL_REMOTE,modelOpts);
 let fc=0,lt=performance.now();const fpsEl=document.getElementById('statusFps');
 function animate(){
   requestAnimationFrame(animate);
-  if(!dirty) return;
+  if(!dirty) return; // skip render if nothing changed
   dirty=false;
   renderer.render(scene,camera);
   fc++;
@@ -241,7 +242,8 @@ const Cipher=(()=>{
 
   function parse(text){
     return text.replace(/<cipher data="([^"]+)">([^<]+)<\/cipher>/g,(match,original,ascii)=>{
-      if(unlocked.has(original))return `<span class="cipher-unlocked">${original}</span>`;
+      if(unlocked.has(original))return `<span class="cipher-unlocked">${original}</span>`; 
+      // Use TextEncoder + fromCharCode to safely base64-encode Unicode strings (plain btoa() fails on non-Latin-1 chars)
       const id='cipher-'+btoa(String.fromCharCode(...new TextEncoder().encode(original))).replace(/=/g,'');
       return `<span class="cipher-block" data-original="${original}" data-ascii="${ascii}" id="${id}">${ascii}<span class="cipher-hint">⬡ENCRYPTED</span></span>`;
     });
@@ -315,6 +317,7 @@ function genStamp(){
   const chunks=Math.floor(Math.random()*3)+3;
   const parts=[];
   let remaining=totalLen;
+  // Randomize text into segments of varying lengths, each consisting of a random letter and a small number of symbols.
   for(let i=0;i<chunks;i++){
     const isLast=i===chunks-1;
     const len=isLast?remaining:Math.floor(remaining/(chunks-i)*(0.6+Math.random()*0.8));
@@ -417,6 +420,7 @@ function parseContent(text){
   }
   const lines=text.split('\n');
   let curId=null,mode=null,descLines=[],detailLines=[];
+  // Flush the cached description and details to the current node
   function flush(){
     if(!curId)return;
     const node=getNode(curId);
