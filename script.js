@@ -1,12 +1,18 @@
 ﻿import * as THREE from 'three';
 import { GLTFLoader } from './libs/GLTFLoader.js';
 
+// -------------------------------------------------------
+// Camera position, change its value to adjust the camera
+// -------------------------------------------------------
 const CAMERAS = [
   { name: "MAIN",  pos: [0.0, 4.0059, 28.0],    target: [0.0, 7.27, 12.5022] },
   { name: "side",   pos: [3.6527, 1.6361, 25.6215],  target: [0.9227, 6.7443, 17.4695] },
   { name: "ALTAR VIEW", pos: [10, 4, 8],                  target: [-2, 7, -4] },
 ];
 
+// -------------------------------------------------------
+// clickable note and image id
+// -------------------------------------------------------
 const NODES = [
   { id:"overview",  label:"Overview",         subtitle:"Andy",   x:50, y:12, symbol:"\u25C8",
     image:"images/overview.png", aspect:"portrait",
@@ -31,12 +37,18 @@ const NODES = [
     desc:"", details:[] },
 ];
 
+// -------------------------------------------------------
+// connection between nodes
+// -------------------------------------------------------
 const CONNECTIONS = [
   ["overview","pillars"],["overview","ceiling"],["overview","floor"],
   ["ceiling","hanging"],["ceiling","walls"],["pillars","walls"],
   ["floor","entrance"],["walls","entrance"],["hanging","entrance"],
 ];
 
+// -------------------------------------------------------
+// State variable
+// -------------------------------------------------------
 let curCam=0, curNode=null, pOpen=false, hoverNode=null;
 function getNode(id){return NODES.find(n=>n.id===id)}
 function getLinks(id){return CONNECTIONS.filter(([a,b])=>a===id||b===id).map(([a,b])=>a===id?b:a)}
@@ -49,6 +61,9 @@ const renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setSize(innerWidth,innerHeight); renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 container.appendChild(renderer.domElement);
 
+// -------------------------------------------------------
+// dirty flag Optimization  refer to https://java-design-patterns.com/patterns/dirty-flag/
+// -------------------------------------------------------
 let dirty=true;
 function markDirty(){dirty=true;}
 
@@ -89,6 +104,7 @@ function toggleZoom(){
   }
 }
 
+// Immediately switch to the specified preset camera position and reset zoom state and ui
 function applyCam(i){const p=CAMERAS[i];camera.position.set(...p.pos);camera.lookAt(new THREE.Vector3(...p.target));curCam=i;zoomed=false;markDirty();const btn=document.getElementById('zoomBtn');if(btn){btn.textContent='⬡ZOOM IN';btn.classList.remove('active');}document.getElementById('viewName').textContent=p.name;document.getElementById('statusCam').textContent=String(i+1).padStart(2,'0');renderCamBtns();}
 
 const gr=new THREE.GridHelper(30,30,0x1a1a2e,0x12121a);gr.position.y=0.01;scene.add(gr);
@@ -111,7 +127,7 @@ function loadGLB(path, options={}){
         model.traverse(child=>{
           if(child.isMesh){
             const edges=new THREE.LineSegments(
-              new THREE.EdgesGeometry(child.geometry,45),
+              new THREE.EdgesGeometry(child.geometry,45), // Show only hard edges greater than 45° // Show only hard edges greater than 45°
               new THREE.LineBasicMaterial({color:0xe94560,transparent:true,opacity:0.5})
             );
             edges.position.copy(child.position);
@@ -154,6 +170,8 @@ const modelOpts={
     if(label)label.textContent='READY';
     if(enterBtn)enterBtn.classList.add('visible');
     if(enterBtn&&pre){
+      // Timing of the animation after clicking enter
+      // sequence: preloader fade-out → Andy (5.1s) → sound effect → Neva (5.1s)
       enterBtn.addEventListener('click',()=>{
         pre.classList.add('pre-done');
         pre.addEventListener('transitionend',()=>{
@@ -186,6 +204,7 @@ const modelOpts={
 const isLocal=false;
 loadGLB(isLocal?MODEL_LOCAL:MODEL_REMOTE,modelOpts);
 
+// Variables for the FPS counter
 let fc=0,lt=performance.now();const fpsEl=document.getElementById('statusFps');
 function animate(){
   requestAnimationFrame(animate);
@@ -210,6 +229,7 @@ function renderMapCon(){const svg=document.getElementById('mapSvg');svg.innerHTM
 function renderMapNodes(){const c=document.getElementById('mapNodes');c.innerHTML='';NODES.forEach(n=>{const isA=curNode===n.id,isCon=curNode&&getLinks(curNode).includes(n.id),isD=curNode&&!isA&&!isCon;const el=document.createElement('div');el.className='map-node'+(isA?' active':'')+(isD?' dimmed':'');el.style.left=n.x+'%';el.style.top=n.y+'%';el.innerHTML=`<div class="map-symbol"><span>${n.symbol}</span></div><div class="map-label">${n.label}</div>`;el.addEventListener('click',()=>{curNode=isA?null:n.id;renderAll();});el.addEventListener('mouseenter',()=>{hoverNode=n.id;renderMapCon();});el.addEventListener('mouseleave',()=>{hoverNode=null;renderMapCon();});c.appendChild(el);});}
 
 // CIPHER
+// Convert the specified text to ASCII code
 function cipher(word){
   const ascii=Array.from(word).map(c=>c.charCodeAt(0)).join(' ');
   return `<cipher data="${word}">${ascii}</cipher>`;
@@ -286,6 +306,7 @@ const Cipher=(()=>{
 })();
 
 // DETAIL
+// Generate random garbled strings for decoration
 function genStamp(){
   const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const syms=['⬡','◈','◇','◆','▽','▼','△'];
@@ -326,6 +347,7 @@ function applyStamp(){
   const duration=1400;
   const start=performance.now();
   const locked=new Array(chars.length).fill(false);
+  // font animation, randomly scrolling and then locking one by one
   function scramble(now){
     const elapsed=now-start;
     const progress=Math.min(elapsed/duration,1);
@@ -387,6 +409,7 @@ document.addEventListener('keydown',e=>{
 });
 
 // CONTENT LOADER
+// Parsing content-desc.txt
 function parseContent(text){
   function applyCipherSyntax(str){
     return str.replace(/\[\[([^\]]+)\]\]/g,(_,w)=>cipher(w));
