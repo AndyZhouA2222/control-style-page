@@ -202,7 +202,7 @@ const modelOpts={
 //loadGLB(MODEL_LOCAL, modelOpts);
 
 // ONLINE MODE: comment out the lines below when using zombie MODE
-const isLocal=false;
+const isLocal=false; // or set to true to use local mode, and do in both ways
 loadGLB(isLocal?MODEL_LOCAL:MODEL_REMOTE,modelOpts);
 
 // Variables for the FPS counter
