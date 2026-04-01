@@ -49,6 +49,7 @@ const CONNECTIONS = [
 // -------------------------------------------------------
 // State variable
 // -------------------------------------------------------
+// current camera, selected node, panel state, and map
 let curCam=0, curNode=null, pOpen=false, hoverNode=null;
 function getNode(id){return NODES.find(n=>n.id===id)}
 function getLinks(id){return CONNECTIONS.filter(([a,b])=>a===id||b===id).map(([a,b])=>a===id?b:a)}
@@ -65,6 +66,7 @@ container.appendChild(renderer.domElement);
 
 // -------------------------------------------------------
 // dirty flag Optimization  refer to https://java-design-patterns.com/patterns/dirty-flag/
+// Only re-render when camera change
 // -------------------------------------------------------
 let dirty=true;
 function markDirty(){dirty=true;}
@@ -84,10 +86,11 @@ function tweenCam(toPos, toTarget, duration=1800, onDone){
   function tick(now){
     if(!tween || !tween.active) return;
     const t = Math.min((now - start) / duration, 1);
-    //  Ease in-out equation refer to https://gist.github.com/gre/1650294
+    //  Ease in-out equation based on https://gist.github.com/gre/1650294
     const e = t<0.5 ? 2*t*t : -1+(4-2*t)*t;
     camera.position.lerpVectors(fromPos, to.pos, e);
     const lerpTarget = new THREE.Vector3().lerpVectors(curTarget, to.target, e);
+    // refer to https://threejs.org/docs/#api/en/math/Vector3.lerpVectors
     camera.lookAt(lerpTarget);
     markDirty();
     if(t < 1) requestAnimationFrame(tick);
@@ -143,6 +146,7 @@ scene.add(gr);
 applyCam(0);
 
 // GLB LOADER
+// Apply a simple edge style after loading
 function loadGLB(path, options={}){
   const loader=new GLTFLoader();
   loader.load(
@@ -159,7 +163,8 @@ function loadGLB(path, options={}){
         model.traverse(child=>{
           if(child.isMesh){
             const edges=new THREE.LineSegments(
-              new THREE.EdgesGeometry(child.geometry,45), // Show only hard edges greater than 45° // 
+              new THREE.EdgesGeometry(child.geometry,45), // Show only hard edges greater than 45°
+              // based on https://threejs.org/docs/#api/en/geometries/EdgesGeometry
               new THREE.LineBasicMaterial({color:0xe94560,transparent:true,opacity:0.5})
             );
             edges.position.copy(child.position);
@@ -203,7 +208,7 @@ const modelOpts={
     if(enterBtn)enterBtn.classList.add('visible');
     if(enterBtn&&pre){
       // Timing of the animation after clicking enter
-      // sequence: preloader fade-out → Andy (5.1s) → sound effect → Neva (5.1s)
+      // sequence: preloader fade-out → Andy → sound effect → Neva 
       enterBtn.addEventListener('click',()=>{
         pre.classList.add('pre-done');
         pre.addEventListener('transitionend',()=>{
@@ -233,7 +238,7 @@ const modelOpts={
 //loadGLB(MODEL_LOCAL, modelOpts);
 
 // ONLINE MODE: comment out the lines below when using zombie MODE
-const isLocal=false; // or set to true to use local mode, and do in both ways
+const isLocal=false; // or set to true to use local mode, can do in both ways it gains same result
 loadGLB(isLocal?MODEL_LOCAL:MODEL_REMOTE,modelOpts);
 
 // Variables for the FPS counter
@@ -351,7 +356,8 @@ const Cipher=(()=>{
   function parse(text){
     return text.replace(/<cipher data="([^"]+)">([^<]+)<\/cipher>/g,(match,original,ascii)=>{
       if(unlocked.has(original))return `<span class="cipher-unlocked">${original}</span>`; 
-      // Use TextEncoder + fromCharCode to safely base64-encode Unicode strings (plain btoa() fails on non-Latin-1 chars)
+      // Use TextEncoder and fromCharCode to make sure btoa dont fails on non Latin characters ie: Chinese/Japanese/emoji
+      // based on https://developer.mozilla.org/en-US/docs/Web/API/Window/btoa#unicode_strings
       const id='cipher-'+btoa(String.fromCharCode(...new TextEncoder().encode(original))).replace(/=/g,'');
       return `<span class="cipher-block" data-original="${original}" data-ascii="${ascii}" id="${id}">${ascii}<span class="cipher-hint">⬡ENCRYPTED</span></span>`;
     });
@@ -594,6 +600,7 @@ function renderPanel(){
     document.body.classList.remove('panel-open');
   }
 }
+//UI refresh after any change
 function renderAll(){
   renderTabs();
   renderMapCon();
@@ -631,7 +638,8 @@ document.addEventListener('keydown', e => {
 });
 
 // CONTENT LOADER
-// Parsing content-desc.txt
+// Read DESC_/DETAILS_from content-desc.txt
+// attach them to each node
 function parseContent(text){
   function applyCipherSyntax(str){
     return str.replace(/\[\[([^\]]+)\]\]/g,(_,w)=>cipher(w));
