@@ -1,18 +1,14 @@
 ﻿import * as THREE from 'three';
 import { GLTFLoader } from './libs/GLTFLoader.js';
 
-// -------------------------------------------------------
 // Camera position, change its value to adjust the camera
-// -------------------------------------------------------
 const CAMERAS = [
   { name: "MAIN",  pos: [0.0, 4.0059, 28.0],    target: [0.0, 7.27, 12.5022] },
   { name: "side",   pos: [3.6527, 1.6361, 25.6215],  target: [0.9227, 6.7443, 17.4695] },
   { name: "ALTAR VIEW", pos: [10, 4, 8],                  target: [-2, 7, -4] },
 ];
 
-// -------------------------------------------------------
 // clickable note and image id
-// -------------------------------------------------------
 const NODES = [
   { id:"overview",  label:"Overview",         subtitle:"Andy",   x:50, y:12, symbol:"\u25C8",
     image:"images/overview.png", aspect:"portrait",
@@ -37,18 +33,14 @@ const NODES = [
     desc:"", details:[] },
 ];
 
-// -------------------------------------------------------
 // connection between nodes
-// -------------------------------------------------------
 const CONNECTIONS = [
   ["overview","pillars"],["overview","ceiling"],["overview","floor"],
   ["ceiling","hanging"],["ceiling","walls"],["pillars","walls"],
   ["floor","entrance"],["walls","entrance"],["hanging","entrance"],
 ];
 
-// -------------------------------------------------------
 // State variable
-// -------------------------------------------------------
 // current camera, selected node, panel state, and map
 let curCam=0, curNode=null, pOpen=false, hoverNode=null;
 function getNode(id){return NODES.find(n=>n.id===id)}
@@ -64,10 +56,8 @@ renderer.setSize(innerWidth,innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 container.appendChild(renderer.domElement);
 
-// -------------------------------------------------------
-// dirty flag Optimization  refer to https://java-design-patterns.com/patterns/dirty-flag/
+// dirty flag optimization  refer to https://java-design-patterns.com/patterns/dirty-flag/
 // Only re-render when camera change
-// -------------------------------------------------------
 let dirty=true;
 function markDirty(){dirty=true;}
 
@@ -90,7 +80,7 @@ function tweenCam(toPos, toTarget, duration=1800, onDone){
     const e = t<0.5 ? 2*t*t : -1+(4-2*t)*t;
     camera.position.lerpVectors(fromPos, to.pos, e);
     const lerpTarget = new THREE.Vector3().lerpVectors(curTarget, to.target, e);
-    // refer to https://threejs.org/docs/#api/en/math/Vector3.lerpVectors
+    // based on  https://threejs.org/docs/#api/en/math/Vector3.lerpVectors
     camera.lookAt(lerpTarget);
     markDirty();
     if(t < 1) requestAnimationFrame(tick);
@@ -122,7 +112,7 @@ function toggleZoom(){
   }
 }
 
-// switch to the specified preset camera position and reset zoom state and ui
+// apply cam preset also reset zoom
 function applyCam(i){
   const p = CAMERAS[i];
   camera.position.set(...p.pos);
@@ -241,7 +231,7 @@ const modelOpts={
 const isLocal=false; // or set to true to use local mode, can do in both ways it gains same result
 loadGLB(isLocal?MODEL_LOCAL:MODEL_REMOTE,modelOpts);
 
-// Variables for the FPS counter
+// fps counter
 let fc = 0;
 let lt = performance.now();
 const fpsEl = document.getElementById('statusFps');
@@ -344,7 +334,7 @@ function renderMapNodes(){
 }
 
 // CIPHER
-// Convert the specified text to ASCII code
+// text to ascii codes
 function cipher(word){
   const ascii=Array.from(word).map(c=>c.charCodeAt(0)).join(' ');
   return `<cipher data="${word}">${ascii}</cipher>`;
@@ -356,7 +346,7 @@ const Cipher=(()=>{
   function parse(text){
     return text.replace(/<cipher data="([^"]+)">([^<]+)<\/cipher>/g,(match,original,ascii)=>{
       if(unlocked.has(original))return `<span class="cipher-unlocked">${original}</span>`; 
-      // Use TextEncoder and fromCharCode to make sure btoa dont fails on non Latin characters ie: Chinese/Japanese/emoji
+      // btoa unicode fix
       // based on https://developer.mozilla.org/en-US/docs/Web/API/Window/btoa#unicode_strings
       const id='cipher-'+btoa(String.fromCharCode(...new TextEncoder().encode(original))).replace(/=/g,'');
       return `<span class="cipher-block" data-original="${original}" data-ascii="${ascii}" id="${id}">${ascii}<span class="cipher-hint">⬡ENCRYPTED</span></span>`;
@@ -406,8 +396,8 @@ const Cipher=(()=>{
           popup.querySelector('.cp-label').textContent='⬡ DECRYPTED';
           setTimeout(() => {
             popup.remove();
-            document.getElementById('cipher-overlay')?.remove();
-            if(onUnlock) onUnlock();
+            document.getElementById('cipher-overlay')?.remove();  // if the element exists, remove it, otherwise do nothing
+            if(onUnlock) onUnlock(); 
           }, 600);
         } else {
           const err=document.getElementById('cp-err');
@@ -418,7 +408,7 @@ const Cipher=(()=>{
       } else if(e.key==='Escape'){
         closing = true;
         popup.remove();
-        document.getElementById('cipher-overlay')?.remove();
+        document.getElementById('cipher-overlay')?.remove(); // use ?. instead of if statement to keep the code shorter, refer to https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
       }
     });
     const close = e => {
@@ -435,7 +425,7 @@ const Cipher=(()=>{
 })();
 
 // DETAIL
-// Generate random garbled strings for decoration
+// random garbled text for decoration
 function genStamp(){
   const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const syms=['⬡','◈','◇','◆','▽','▼','△'];
@@ -443,7 +433,7 @@ function genStamp(){
   const chunks=Math.floor(Math.random()*3)+3;
   const parts=[];
   let remaining=totalLen;
-  // Randomize text into segments of varying lengths, each consisting of a random letter and a small number of symbols.
+  // randomly split into random length word, mix with letters and symbols
   for(let i=0;i<chunks;i++){
     const isLast=i===chunks-1;
     const len=isLast?remaining:Math.floor(remaining/(chunks-i)*(0.6+Math.random()*0.8));
@@ -646,7 +636,7 @@ function parseContent(text){
   }
   const lines=text.split('\n');
   let curId=null,mode=null,descLines=[],detailLines=[];
-  // Flush the cached description and details to the current node
+  // flush desc/details to node
   function flush(){
     if(!curId)return;
     const node=getNode(curId);
