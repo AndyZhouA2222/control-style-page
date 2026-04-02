@@ -5,7 +5,6 @@
 // 加密语法: 用 [[ ]] 包裹需要加密的词
 //   例如: The [[axial design]] merging Brutalist...
 //
-// DETAILS 每条用换行分隔，共3条
 // ============================================================
 
 
@@ -50,12 +49,12 @@ Last unauthorized answer: 1971, operator status: still on the line
 // ─────────────────────────────────────────
 
 DESC_floor:
-something here
+For those who look at it for more than [[four]] seconds, the same etching as the seal will appear on their [[retinas]] within 48 hours.
 
 DETAILS_floor:
-something here
-something here
-something here
+Seal nesting depth: theoretically infinite
+Radiation frequency: consistent with human brain waves
+Auto-configuration with any constructed main chamber
 
 
 // ─────────────────────────────────────────
@@ -63,11 +62,11 @@ something here
 // ─────────────────────────────────────────
 
 DESC_hanging:
-something here
+The gate is the only entrance to the main chamber. In 1988, a tester ran through it, but the arrival time was actually delayed by [[three days]]
 DETAILS_hanging:
-something here
-something here
-something here
+Path length: Determined by the speed of passage
+Mode of passage: on foot only
+Exit security log: The time recorded for all individuals is consistently zero seconds
 
 
 // ─────────────────────────────────────────
@@ -75,11 +74,11 @@ something here
 // ─────────────────────────────────────────
 
 DESC_walls:
-something here
+The wall is the first level of the shelter structure that surrounds all Blackrock facilities, and personnel who question it will be reassigned, as the wall will [[answer]], the last questioning took place in [[1983]], after which a new wall [[grew]] in the area.
 DETAILS_walls:
-something here
-something here
-something here
+Date of construction: Not recorded
+Material Composition: Containing Unknown Organic Matter
+Wall condition: 17 seconds of vibration every four hours
 
 
 // ─────────────────────────────────────────
@@ -87,9 +86,9 @@ something here
 // ─────────────────────────────────────────
 
 DESC_entrance:
-something here
+The open recording area is the only open space in the facility, and persons who stay for more than [[nine]] minutes are reported as “watched” and the [[outline]] of the person who stayed is left on the floor.
 
 DETAILS_entrance:
-something here
-something here
-something here
+Central Bio-Tower: Rotates automatically every 72 hours
+Ground shadows: Direction is independent of the sun's position
+Prohibition: Do not stay longer than ten minutes
